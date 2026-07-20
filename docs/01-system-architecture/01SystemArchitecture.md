@@ -1,11 +1,11 @@
-# System Design Document: End-to-End Data Flow in a CLMS
+# System Design Document: End-to-End Data Flow in a Logistics System
 
 ## I. Project Architecture Overview
-**System Name:** GroupX_CourierSystem  
+**System Name:** Group2-1_CourierSystem  
 **Target Paradigm:** Object-Oriented Domain Driven Architecture  
 
 ### Technical Summary
-The Courier and Logistics Management System (CLMS) is an enterprise-grade software architecture designed to streamline end-to-end parcel delivery, financial auditing, and human resource tracking. The system partitions enterprise operations into distinct, highly specialized modules:
+The Courier and Logistics System is an enterprise-grade software architecture designed to streamline end-to-end parcel delivery, financial auditing, and human resource tracking. The system partitions enterprise operations into distinct, highly specialized modules:
 
 1. **Operations & Logistics:** Handles physical asset routing via `Shipment` status pipelines and structural dimensional constraints under the `Parcel` domain.
 2. **Infrastructure & Personnel:** Manages administrative, warehouse, and courier staff workflows under the `Staff` framework.

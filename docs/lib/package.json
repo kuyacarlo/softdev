@@ -1,0 +1,20 @@
+{
+  "name": "logistics-presentation-backend",
+  "version": "1.0.0",
+  "description": "Short presentation on Logistics System Architecture using Marp",
+  "scripts": {
+    "build:system": "marp --html --allow-local-files --theme src/theme.css src/system_architecture_deck.md -o dist/system_architecture_deck.html && cp -r src/diagrams dist/",
+    "build:requirements": "marp --html --allow-local-files --theme src/theme.css src/requirements_engineering_workshop_deck.md -o dist/requirements_engineering_workshop_deck.html",
+    "build": "pnpm build:system && pnpm build:requirements",
+    "build:system:pdf": "marp --html --allow-local-files --theme src/theme.css --pdf src/system_architecture_deck.md -o dist/system_architecture_deck.pdf",
+    "build:system:pptx": "marp --html --allow-local-files --theme src/theme.css --pptx src/system_architecture_deck.md -o dist/system_architecture_deck.pptx",
+    "build:requirements:pdf": "marp --html --allow-local-files --theme src/theme.css --pdf src/requirements_engineering_workshop_deck.md -o dist/requirements_engineering_workshop_deck.pdf",
+    "build:requirements:pptx": "marp --html --allow-local-files --theme src/theme.css --pptx src/requirements_engineering_workshop_deck.md -o dist/requirements_engineering_workshop_deck.pptx",
+    "build:pdf": "pnpm build:system:pdf && pnpm build:requirements:pdf",
+    "build:pptx": "pnpm build:system:pptx && pnpm build:requirements:pptx",
+    "watch": "marp --html --allow-local-files -w -s -I src/"
+  },
+  "devDependencies": {
+    "@marp-team/marp-cli": "^4.1.0"
+  }
+}
