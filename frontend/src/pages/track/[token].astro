@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { TrackStatusViewer } from '../../components/TrackStatusViewer';
+
+export function getStaticPaths() {
+  return [{ params: { token: 'lookup' } }];
+}
+
+const { token } = Astro.params;
+---
+
+<BaseLayout
+  title={`Tracking Reservation | Casa de Stella`}
+  description="Live status viewer for your catering reservation."
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div id="dynamic-tracker-container">
+      <TrackStatusViewer client:load token={token || ''} />
+    </div>
+  </div>
+
+  <script>
+    // Extract token from pathname if static fallback
+    const pathParts = window.location.pathname.split('/').filter(Boolean);
+    const lastPart = pathParts[pathParts.length - 1];
+    if (lastPart && lastPart !== 'lookup' && lastPart !== 'track') {
+      // Re-render viewer with actual token from browser URL if needed
+    }
+  </script>
+</BaseLayout>

@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { BookingWizard } from '../components/BookingWizard';
+
+const packageIdParam = Astro.url.searchParams.get('packageId');
+const initialPackageId = packageIdParam ? parseInt(packageIdParam, 10) : undefined;
+---
+
+<BaseLayout
+  title="Book an Event | Casa de Stella Catering"
+  description="Submit a reservation request with your preferred date, headcount, and aesthetic theme preferences."
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="max-w-2xl mx-auto text-center mb-10">
+      <span class="text-xs font-bold uppercase tracking-wider text-amber-700">Online Reservation Intake</span>
+      <h1 class="text-3xl sm:text-4xl font-serif font-bold text-stone-900 mt-1 mb-3">
+        Reserve Your Event Date
+      </h1>
+      <p class="text-stone-600 text-sm leading-relaxed">
+        Fill in your event logistics below. You will receive an instant tracking link to monitor your booking status without needing to register an account.
+      </p>
+    </div>
+
+    <BookingWizard client:load initialPackageId={initialPackageId} />
+  </div>
+</BaseLayout>
