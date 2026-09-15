@@ -4,6 +4,9 @@ compatibility_date = "2025-02-24"
 compatibility_flags = ["nodejs_compat"]
 account_id = "04a311dd63265e896ca15a8e8124f144"
 
+[alias]
+"@stella/schema" = "../packages/schema/src/index.ts"
+
 [vars]
 ENVIRONMENT = "production"
 JWT_SECRET = "production-jwt-secret-stella-catering-2026-edge"
@@ -15,8 +18,3 @@ binding = "DB"
 database_name = "stella-db"
 database_id = "085facb9-112d-4c26-b325-ac7bad8e3552"
 migrations_dir = "drizzle"
-
-# [[r2_buckets]]
-# binding = "BUCKET"
-# bucket_name = "stella-media"
-# preview_bucket_name = "stella-media-preview"
