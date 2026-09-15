@@ -1,0 +1,35 @@
+---
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Casa de Stella Catering Services | Premier Catering & Event Management',
+  description = 'Exquisite catering packages and seamless event reservation platform for weddings, debuts, corporate gatherings, and birthdays in Bulacan.',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="h-full bg-stone-50 text-stone-900 antialiased">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+  </head>
+  <body class="min-h-full flex flex-col justify-between selection:bg-amber-100 selection:text-amber-900">
+    <div>
+      <Navbar />
+      <main>
+        <slot />
+      </main>
+    </div>
+    <Footer />
+  </body>
+</html>

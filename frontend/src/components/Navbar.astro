@@ -1,0 +1,63 @@
+---
+const currentPath = Astro.url.pathname;
+---
+
+<header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-stone-200">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <div class="flex items-center space-x-3">
+        <a href="/" class="flex items-center space-x-2">
+          <div class="w-8 h-8 rounded bg-stone-900 flex items-center justify-center text-amber-100 font-serif font-bold text-lg">
+            S
+          </div>
+          <span class="text-xl font-serif font-semibold tracking-tight text-stone-900">
+            Casa de Stella
+          </span>
+        </a>
+      </div>
+
+      <nav class="hidden md:flex items-center space-x-8">
+        <a
+          href="/"
+          class={`text-sm font-medium transition-colors ${
+            currentPath === '/' ? 'text-amber-700' : 'text-stone-600 hover:text-stone-900'
+          }`}
+        >
+          Home
+        </a>
+        <a
+          href="/packages"
+          class={`text-sm font-medium transition-colors ${
+            currentPath.startsWith('/packages') ? 'text-amber-700' : 'text-stone-600 hover:text-stone-900'
+          }`}
+        >
+          Catering Packages
+        </a>
+        <a
+          href="/track"
+          class={`text-sm font-medium transition-colors ${
+            currentPath.startsWith('/track') ? 'text-amber-700' : 'text-stone-600 hover:text-stone-900'
+          }`}
+        >
+          Track Reservation
+        </a>
+      </nav>
+
+      <div class="flex items-center space-x-4">
+        <a
+          href="/book"
+          class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-stone-900 hover:bg-stone-800 rounded-lg shadow-sm transition-all"
+        >
+          Book an Event
+        </a>
+        <a
+          href="/admin/login"
+          class="text-xs text-stone-400 hover:text-stone-600 transition-colors"
+          title="Staff Login"
+        >
+          Staff Portal
+        </a>
+      </div>
+    </div>
+  </div>
+</header>

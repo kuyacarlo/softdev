@@ -1,17 +1,114 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PackageCard from '../components/PackageCard.astro';
+import { getPackages } from '../lib/api-client';
+import type { CateringPackage } from '@stella/schema';
 
+let packages: CateringPackage[] = [];
+try {
+  packages = await getPackages();
+} catch {
+  packages = [
+    {
+      packageId: 1,
+      packageName: 'Grand Emerald Wedding Package',
+      eventCategory: 'Wedding',
+      basePrice: 55000,
+      minPax: 50,
+      isAvailable: true,
+      inclusions: ['5-course buffet', 'Thematic couple backdrop', 'Uniformed waitstaff', 'Sound system'],
+    },
+  ];
+}
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout title="Casa de Stella | Premier Catering & Event Management">
+  {/* Hero Section */}
+  <section class="relative bg-stone-900 text-white overflow-hidden py-24 sm:py-32">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="max-w-3xl space-y-6">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-900/60 text-amber-300 border border-amber-700/50">
+          Premier Catering in Bulacan & Greater Manila
+        </span>
+        <h1 class="text-4xl sm:text-6xl font-serif font-bold tracking-tight text-white leading-tight">
+          Exquisite Menus. <br />
+          <span class="text-amber-400">Effortless Celebrations.</span>
+        </h1>
+        <p class="text-lg text-stone-300 leading-relaxed max-w-2xl">
+          From grand weddings to intimate milestones, Casa de Stella delivers crafted banquet dining, elegant thematic styling, and transparent booking management.
+        </p>
+        <div class="flex flex-wrap gap-4 pt-4">
+          <a
+            href="/packages"
+            class="px-6 py-3 rounded-lg text-base font-medium bg-amber-500 hover:bg-amber-400 text-stone-950 font-semibold transition-all shadow-md"
+          >
+            Explore Catering Packages
+          </a>
+          <a
+            href="/track"
+            class="px-6 py-3 rounded-lg text-base font-medium bg-stone-800 hover:bg-stone-700 text-stone-200 border border-stone-700 transition-all"
+          >
+            Track Existing Reservation
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* Value Props */}
+  <section class="py-16 bg-white border-b border-stone-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="p-6 rounded-lg bg-stone-50 border border-stone-100 space-y-3">
+          <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-800 font-bold text-lg font-mono">
+            1
+          </div>
+          <h3 class="text-lg font-serif font-semibold text-stone-900">Itemized Transparency</h3>
+          <p class="text-sm text-stone-600 leading-relaxed">
+            Browse complete menu courses, inclusions, and minimum headcount requirements without waiting on back-and-forth inquiries.
+          </p>
+        </div>
+
+        <div class="p-6 rounded-lg bg-stone-50 border border-stone-100 space-y-3">
+          <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-800 font-bold text-lg font-mono">
+            2
+          </div>
+          <h3 class="text-lg font-serif font-semibold text-stone-900">Guaranteed Schedule Integrity</h3>
+          <p class="text-sm text-stone-600 leading-relaxed">
+            Automated conflict checks and a strict 7-day minimum lead time buffer ensure our kitchen and styling teams never double-book.
+          </p>
+        </div>
+
+        <div class="p-6 rounded-lg bg-stone-50 border border-stone-100 space-y-3">
+          <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-800 font-bold text-lg font-mono">
+            3
+          </div>
+          <h3 class="text-lg font-serif font-semibold text-stone-900">Self-Service Guest Tracking</h3>
+          <p class="text-sm text-stone-600 leading-relaxed">
+            Track your reservation status in real time with your private tracking token without needing to create or remember account credentials.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* Featured Packages Section */}
+  <section class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
+      <div>
+        <span class="text-xs font-bold uppercase tracking-wider text-amber-700">Signature Catalog</span>
+        <h2 class="text-3xl font-serif font-bold text-stone-900 mt-1">Featured Catering Packages</h2>
+      </div>
+      <a href="/packages" class="text-sm font-medium text-amber-700 hover:text-amber-800 flex items-center space-x-1">
+        <span>View all packages</span>
+        <span>→</span>
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {packages.slice(0, 3).map((pkg) => (
+        <PackageCard pkg={pkg} />
+      ))}
+    </div>
+  </section>
+</BaseLayout>

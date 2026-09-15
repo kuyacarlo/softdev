@@ -1,0 +1,62 @@
+---
+import type { CateringPackage } from '@stella/schema';
+
+interface Props {
+  pkg: CateringPackage;
+}
+
+const { pkg } = Astro.props;
+
+const formattedPrice = new Intl.NumberFormat('en-PH', {
+  style: 'currency',
+  currency: 'PHP',
+  maximumFractionDigits: 0,
+}).format(pkg.basePrice);
+---
+
+<div class="bg-white rounded-xl border border-stone-200 p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
+  <div>
+    <div class="flex items-center justify-between mb-3">
+      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-800 border border-amber-200">
+        {pkg.eventCategory}
+      </span>
+      <span class="text-xs text-stone-500 font-mono">
+        Min. {pkg.minPax} Pax
+      </span>
+    </div>
+
+    <h3 class="text-lg font-serif font-bold text-stone-900 mb-2">
+      {pkg.packageName}
+    </h3>
+
+    <div class="mb-4">
+      <span class="text-2xl font-bold text-stone-900 font-mono">
+        {formattedPrice}
+      </span>
+      <span class="text-xs text-stone-500"> base package</span>
+    </div>
+
+    {pkg.inclusions && pkg.inclusions.length > 0 && (
+      <div class="space-y-2 mb-6 border-t border-stone-100 pt-4">
+        <p class="text-xs font-semibold text-stone-700 uppercase tracking-wider">Package Inclusions:</p>
+        <ul class="text-xs text-stone-600 space-y-1.5">
+          {pkg.inclusions.map((item) => (
+            <li class="flex items-start space-x-2">
+              <span class="text-amber-600 mt-0.5">✓</span>
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </div>
+
+  <div class="pt-4 border-t border-stone-100">
+    <a
+      href={`/book?packageId=${pkg.packageId}`}
+      class="w-full inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-stone-900 bg-amber-100 hover:bg-amber-200 rounded-lg transition-colors"
+    >
+      Select Package & Book
+    </a>
+  </div>
+</div>
