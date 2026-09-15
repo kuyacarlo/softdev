@@ -6,6 +6,11 @@
 # Ignore content collection generated files
 .astro
 
+# Cloudflare Wrangler
+.wrangler/
+dist/
+
+
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/

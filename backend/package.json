@@ -1,0 +1,34 @@
+{
+  "name": "@stella/backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "build": "tsc --noEmit",
+    "deploy": "wrangler deploy",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate:local": "wrangler d1 migrations apply stella-db --local",
+    "db:migrate:remote": "wrangler d1 migrations apply stella-db --remote",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@hono/zod-openapi": "^0.18.4",
+    "@scalar/hono-api-reference": "^0.5.170",
+    "@stella/schema": "workspace:*",
+    "bcrypt-ts": "^5.0.3",
+    "drizzle-orm": "^0.40.0",
+    "hono": "^4.7.2",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250224.0",
+    "@types/better-sqlite3": "^9.6.0",
+    "better-sqlite3": "^12.10.0",
+    "drizzle-kit": "^0.30.5",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.7",
+    "wrangler": "^3.109.2"
+  }
+}

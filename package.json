@@ -1,0 +1,14 @@
+{
+  "name": "stella-catering-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --parallel --filter \"./backend\" --filter \"./frontend\" dev",
+    "build": "pnpm --filter \"./packages/*\" build && pnpm --filter \"./backend\" build && pnpm --filter \"./frontend\" build",
+    "dev:backend": "pnpm --filter \"./backend\" dev",
+    "dev:frontend": "pnpm --filter \"./frontend\" dev",
+    "db:generate": "pnpm --filter \"./backend\" db:generate",
+    "db:migrate:local": "pnpm --filter \"./backend\" db:migrate:local",
+    "db:migrate:remote": "pnpm --filter \"./backend\" db:migrate:remote"
+  }
+}
