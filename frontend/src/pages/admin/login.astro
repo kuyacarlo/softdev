@@ -1,0 +1,13 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { AdminLogin } from '../../components/AdminLogin';
+---
+
+<BaseLayout
+  title="Staff Portal Login | Casa de Stella"
+  description="Internal authentication for catering managers and administrators."
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+    <AdminLogin client:load />
+  </div>
+</BaseLayout>
