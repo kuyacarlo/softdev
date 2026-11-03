@@ -7,5 +7,10 @@ A repository for storage of requirements for partial fulfilment of Software Desi
   - **[system_architecture_deck.md](docs/01-system-architecture/system_architecture_deck.md)**: A Marp-based presentation summarizing the system design and UML components.
 - **[docs/02-requirements-workshop/](docs/02-requirements-workshop)**: Contains the Requirements Engineering Workshop activity details ([requirements_engineering_workshop.md](docs/02-requirements-workshop/requirements_engineering_workshop.md)).
   - **[requirements_engineering_workshop_deck.md](docs/02-requirements-workshop/requirements_engineering_workshop_deck.md)**: A Marp-based presentation summarizing the requirements workshop.
-- **[docs/03-srs/](docs/03-srs/)**: Software Requirements Specification for Smart Campus Logistics System ([software-requirements-specification.md](docs/03-srs/software-requirements-specification.md)) — local markdown conversion from client PDF; not pushed until ready.
+- **[docs/03-srs/](docs/03-srs/)**: Software Requirements Specifications for all three systems, one file per system:
+  - **[srs-client-stella-catering.md](docs/03-srs/srs-client-stella-catering.md)**: Stella's Event Management Services Website (client system) — converted from the client's PDF requirements and reformatted to the CPE 304/304L SRS template.
+  - **[srs-study-pod.md](docs/03-srs/srs-study-pod.md)**: Study Pod Reservation System.
+  - **[srs-campus-logistics.md](docs/03-srs/srs-campus-logistics.md)**: Smart Campus Logistics System (document custody & approval tracker) — formalizes the Requirements Engineering Workshop problem statement.
+- **[docs/04-system-engineering-blueprint/](docs/04-system-engineering-blueprint)**: Midterm System Engineering Blueprint, including the client counterpart specification for Casa de Stella Catering Services.
+- **[docs/05-tech-stack-and-deployment/](docs/05-tech-stack-and-deployment)**: Architecture/scaffolding notes, backend constraints and OpenAPI plan, and deployment pitfalls/mitigations for the implemented system.
 - **[lib/](lib)**: Central Marp compilation backend containing symlinks to the presentation decks in `lib/src/`.
