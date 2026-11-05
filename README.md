@@ -13,4 +13,5 @@ A repository for storage of requirements for partial fulfilment of Software Desi
   - **[srs-campus-logistics.md](docs/03-srs/srs-campus-logistics.md)**: Smart Campus Logistics System (document custody & approval tracker) — formalizes the Requirements Engineering Workshop problem statement.
 - **[docs/04-system-engineering-blueprint/](docs/04-system-engineering-blueprint)**: Midterm System Engineering Blueprint, including the client counterpart specification for Casa de Stella Catering Services.
 - **[docs/05-tech-stack-and-deployment/](docs/05-tech-stack-and-deployment)**: Architecture/scaffolding notes, backend constraints and OpenAPI plan, and deployment pitfalls/mitigations for the implemented system.
+- **[study-pod/](study-pod)**: Working implementation of the Study Pod Reservation System (Cloudflare Workers + D1 API, React web client, tests, and an SRS traceability matrix).
 - **[lib/](lib)**: Central Marp compilation backend containing symlinks to the presentation decks in `lib/src/`.

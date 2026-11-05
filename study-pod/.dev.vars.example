@@ -1,0 +1,5 @@
+# Local development overrides (copied to .dev.vars by `npm run setup`).
+# AUTH_MODE=dev enables the built-in mock SSO sign-in page. NEVER use it in production.
+AUTH_MODE=dev
+SESSION_SECRET=local-dev-session-secret-change-me-0123456789
+EMAIL_PROVIDER=log

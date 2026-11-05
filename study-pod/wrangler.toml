@@ -1,0 +1,37 @@
+# StudyPod — Cloudflare Worker (API + cron jobs) serving the React SPA as static assets.
+name = "study-pod"
+main = "src/worker/index.ts"
+compatibility_date = "2025-10-01"
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+run_worker_first = ["/api/*"]
+
+# SRS 3.5.2 — the no-show release / reminder job runs every minute.
+[triggers]
+crons = ["* * * * *"]
+
+# Non-secret configuration. Secrets (SESSION_SECRET, SSO_CLIENT_SECRET, RESEND_API_KEY)
+# are set with `wrangler secret put <NAME>`; locally they come from .dev.vars.
+[vars]
+APP_NAME = "StudyPod"
+CAMPUS_TZ = "Asia/Manila"
+AUTH_MODE = "oidc"
+UNIVERSITY_EMAIL_DOMAIN = "campus.edu"
+BOOTSTRAP_MANAGER_EMAIL = ""
+EMAIL_PROVIDER = "log"
+EMAIL_FROM = "StudyPod <no-reply@campus.edu>"
+SSO_AUTHORIZE_URL = ""
+SSO_TOKEN_URL = ""
+SSO_USERINFO_URL = ""
+SSO_CLIENT_ID = ""
+SSO_SCOPES = "openid email profile"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "study-pod-db"
+# Replace with the id printed by `wrangler d1 create study-pod-db` before deploying.
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "migrations"

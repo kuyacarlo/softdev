@@ -1,0 +1,45 @@
+{
+  "name": "study-pod",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Study Pod Reservation System (StudyPod) — campus study pod booking, check-in and utilization reporting.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "setup": "node scripts/setup.mjs && npm run db:migrate:local && npm run db:seed:local",
+    "dev": "concurrently -k -n api,web -c blue,green \"wrangler dev --port 8787\" \"vite\"",
+    "build": "vite build",
+    "start": "vite build && wrangler dev --port 8787",
+    "deploy": "vite build && wrangler deploy",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.web.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "db:migrate:local": "wrangler d1 migrations apply study-pod-db --local",
+    "db:migrate:remote": "wrangler d1 migrations apply study-pod-db --remote",
+    "db:seed:local": "wrangler d1 execute study-pod-db --local --file=seed/dev-seed.sql"
+  },
+  "dependencies": {
+    "@hono/zod-validator": "^0.4.3",
+    "hono": "^4.7.2",
+    "qrcode": "^1.5.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router": "^7.2.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20251020.0",
+    "@types/node": "^22.13.0",
+    "@types/qrcode": "^1.5.5",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.1.2",
+    "typescript": "^5.7.3",
+    "vite": "^6.2.0",
+    "vitest": "^3.0.7",
+    "wrangler": "~4.45.0"
+  }
+}
