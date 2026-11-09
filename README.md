@@ -13,4 +13,5 @@ A repository for storage of requirements for partial fulfilment of Software Desi
   - **[srs-campus-logistics.md](docs/03-srs/srs-campus-logistics.md)**: Smart Campus Logistics System (document custody & approval tracker) — formalizes the Requirements Engineering Workshop problem statement.
 - **[docs/04-system-engineering-blueprint/](docs/04-system-engineering-blueprint)**: Midterm System Engineering Blueprint, including the client counterpart specification for Casa de Stella Catering Services.
 - **[docs/05-tech-stack-and-deployment/](docs/05-tech-stack-and-deployment)**: Architecture/scaffolding notes, backend constraints and OpenAPI plan, and deployment pitfalls/mitigations for the implemented system.
+- **[docs/06-ux-evaluation/](docs/06-ux-evaluation)**: Activity No. 5 – UX Evaluation and Refinement of the Casa de Stella client system ([ux_evaluation_stella_client_system.md](docs/06-ux-evaluation/ux_evaluation_stella_client_system.md) and a submission-ready `.docx`), with annotated evidence screenshots in `evidence/`.
 - **[lib/](lib)**: Central Marp compilation backend containing symlinks to the presentation decks in `lib/src/`.
