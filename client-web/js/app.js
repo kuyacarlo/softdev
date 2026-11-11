@@ -39,6 +39,14 @@ function navHtml(route) {
 function setNav() {
   const route = parseHash();
   document.getElementById("nav").innerHTML = navHtml(route);
+  const toggle = document.getElementById("nav-toggle");
+  if (toggle && !toggle.dataset.bound) {
+    toggle.dataset.bound = "1";
+    toggle.onclick = () => {
+      const open = document.body.classList.toggle("nav-open");
+      toggle.setAttribute("aria-expanded", String(open));
+    };
+  }
   const staff = document.getElementById("staff-link");
   if (staff) staff.hidden = Boolean(getCustomerUser() || getAdminUser());
   document.body.classList.toggle("is-admin", Boolean(getAdminUser()));
@@ -57,6 +65,29 @@ function setNav() {
       render();
     };
   }
+}
+
+const STATUS_HELP = {
+  Pending: "The events team is checking the date and will confirm or decline the request, usually within 1 to 2 business days.",
+  Confirmed: "Your date is reserved. The events team will contact you about the menu and final quote.",
+  Completed: "The event is done. Thank you for celebrating with Casa de Stella.",
+  Declined: "The date could not be accommodated. You can send a new request for another date.",
+  Cancelled: "This reservation was cancelled.",
+};
+
+function statusStepper(status) {
+  const steps = ["Pending", "Confirmed", "Completed"];
+  const ended = status === "Declined" || status === "Cancelled";
+  const idx = steps.indexOf(status);
+  const items = steps
+    .map((s, i) => `<li class="${!ended && i <= idx ? "done" : ""} ${s === status ? "current" : ""}">${s}</li>`)
+    .join("");
+  return `<ol class="status-steps${ended ? " ended" : ""}">${items}${ended ? `<li class="current end">${escapeHtml(status)}</li>` : ""}</ol>
+    <p class="status-help">${escapeHtml(STATUS_HELP[status] || "")}</p>`;
+}
+
+function normalizePhone(value) {
+  return String(value || "").replace(/[\s-]/g, "").trim();
 }
 
 function nextAfterAuth() {
@@ -131,13 +162,14 @@ async function viewHome() {
       <div>
         <div class="kicker">Safe booking</div>
         <h2>How to book</h2>
-        <p class="muted">Send a date request in four steps. The events team reviews availability and posts updates you can follow anytime.</p>
+        <p class="muted">Send a date request in five steps. The events team reviews availability and posts updates you can follow anytime.</p>
       </div>
       <ol class="account-steps">
         <li><strong>1. Choose a package</strong><span>Open Packages and pick the event style that fits your gathering</span></li>
-        <li><strong>2. Open Book</strong><span>Enter the guest name, mobile, email, date, venue, and headcount</span></li>
-        <li><strong>3. Submit the request</strong><span>Send it at least 7 days ahead; minimum guests follow the package</span></li>
-        <li><strong>4. Track the reservation</strong><span>Save the tracking token and watch the status until the event day</span></li>
+        <li><strong>2. Create a free account or sign in</strong><span>Your account keeps every reservation and tracking token in one dashboard</span></li>
+        <li><strong>3. Open Book</strong><span>Enter the guest name, mobile, email, date, venue, and headcount</span></li>
+        <li><strong>4. Submit the request</strong><span>Send it at least 7 days ahead; minimum guests follow the package</span></li>
+        <li><strong>5. Track the reservation</strong><span>Save the tracking token and watch the status until the event day</span></li>
       </ol>
     </section>
     <section class="section">
@@ -245,14 +277,14 @@ async function viewBook(route) {
       }</p>
       <form class="form two" id="book-form">
         <label>Full name<input name="fullName" required minlength="2" value="${escapeHtml(customer?.fullName || "")}" /></label>
-        <label>Mobile number<input name="contactNumber" required pattern="^(09|\\+639)\\d{9}$" value="${escapeHtml(customer?.contactNumber || "")}" /></label>
+        <label>Mobile number<input name="contactNumber" required inputmode="tel" value="${escapeHtml(customer?.contactNumber || "")}" placeholder="09171234567" /><small class="field-help">11 digits starting with 09, or +639. Spaces and dashes are removed for you.</small></label>
         <label>Email<input name="email" type="email" required value="${escapeHtml(email)}" ${customer ? "readonly" : ""} /></label>
         <label>Package
           <select name="packageId" required>
             ${pkgs.data
               .map(
                 (p) =>
-                  `<option value="${p.packageId}" data-min-pax="${p.minPax}" ${String(p.packageId) === selected ? "selected" : ""}>${escapeHtml(p.packageName)} · ${php(p.basePrice)} · min ${p.minPax}</option>`
+                  `<option value="${p.packageId}" data-min-pax="${p.minPax}" data-price="${p.basePrice}" data-name="${escapeHtml(p.packageName)}" data-category="${escapeHtml(p.eventCategory)}" ${String(p.packageId) === selected ? "selected" : ""}>${escapeHtml(p.packageName)} · ${php(p.basePrice)} · min ${p.minPax}</option>`
               )
               .join("")}
           </select>
@@ -262,6 +294,7 @@ async function viewBook(route) {
         <label class="span-2">Venue<input name="venueLocation" required minlength="5" placeholder="Hiyas Convention Center, Malolos, Bulacan" /></label>
         <label class="span-2">Design &amp; theme notes<textarea name="designThemeNotes" maxlength="1000" placeholder="Rustic garden theme with pastel floral accents"></textarea></label>
         <label class="span-2">Inspiration photo (optional, jpeg/png/webp/avif, max 5MB)<input name="photo" type="file" accept="image/jpeg,image/png,image/webp,image/avif" /></label>
+        <aside class="span-2 booking-summary" id="book-summary" aria-live="polite"></aside>
         <div class="span-2" id="book-status"></div>
         <div class="span-2"><button class="btn btn-primary" type="submit">Submit booking request</button></div>
       </form>
@@ -279,8 +312,30 @@ async function bindBook() {
     guestInput.min = String(min);
     if (Number(guestInput.value) < min) guestInput.value = String(min);
   };
-  pkgSelect.onchange = syncMinPax;
+  const summary = document.getElementById("book-summary");
+  const renderSummary = () => {
+    const opt = pkgSelect.selectedOptions[0];
+    if (!opt || !summary) return;
+    const min = Number(opt.dataset.minPax || 30);
+    const guests = Number(guestInput.value) || 0;
+    summary.innerHTML = `
+      <h3>Booking summary</h3>
+      <dl>
+        <div><dt>Package</dt><dd>${escapeHtml(opt.dataset.name)}</dd></div>
+        <div><dt>Category</dt><dd>${escapeHtml(opt.dataset.category)}</dd></div>
+        <div><dt>Base price</dt><dd>${php(opt.dataset.price)} (from ${min} guests)</dd></div>
+        <div><dt>Guests requested</dt><dd>${guests}${guests > min ? ` (${guests - min} above the package minimum)` : ""}</dd></div>
+        <div class="summary-total"><dt>Estimated starting price</dt><dd>${php(opt.dataset.price)}</dd></div>
+      </dl>
+      <p class="muted">The estimate is the package base price. The events team confirms the final quote for your guest count and any add-ons when they review the request.</p>`;
+  };
+  pkgSelect.onchange = () => {
+    syncMinPax();
+    renderSummary();
+  };
+  guestInput.oninput = renderSummary;
   syncMinPax();
+  renderSummary();
   form.onsubmit = async (e) => {
     e.preventDefault();
     const status = document.getElementById("book-status");
@@ -289,7 +344,7 @@ async function bindBook() {
     btn.disabled = true;
     status.innerHTML = `<div class="notice">Sending your request…</div>`;
     try {
-      const phone = String(fd.get("contactNumber") || "").trim();
+      const phone = normalizePhone(fd.get("contactNumber"));
       if (!PHONE_RE.test(phone)) throw new Error("Use a Philippine mobile number such as 09171234567 or +639171234567.");
       const eventDate = String(fd.get("eventDate"));
       const minDate = localISODate(MIN_LEAD_DAYS);
@@ -324,16 +379,32 @@ async function bindBook() {
       const follow = getAdminUser()
         ? `<a class="btn btn-primary" href="#/admin/reservations">Open reservations</a>`
         : `<a class="btn btn-primary" href="#/track/${encodeURIComponent(token)}">Track this booking</a>`;
-      status.innerHTML = `
-        <div class="success">
-          Booking #${created.data.bookingId} is ${created.data.status}. Save your tracking token:
-          <div class="token-box">${escapeHtml(token)}</div>
-          <p>${follow}</p>
+      const opt = pkgSelect.selectedOptions[0];
+      form.closest("section").innerHTML = `
+        <div class="kicker">Request sent</div>
+        <h2 tabindex="-1" id="confirm-heading">Booking #${created.data.bookingId} received</h2>
+        <div class="success confirm-panel">
+          <p><strong>${escapeHtml(opt?.dataset.name || "")}</strong> · ${formatDate(eventDate)} · ${guestCount} guests</p>
+          <p>Status: <span class="badge ${escapeHtml(created.data.status)}">${escapeHtml(created.data.status)}</span> ${escapeHtml(STATUS_HELP[created.data.status] || "")}</p>
+          <p>Save your tracking token:</p>
+          <div class="token-row"><div class="token-box" id="confirm-token">${escapeHtml(token)}</div><button class="btn btn-ghost" type="button" id="copy-token">Copy</button></div>
+          <p class="confirm-actions">${follow}${getAdminUser() ? "" : ` <a class="btn btn-ghost" href="#/account">Go to Dashboard</a>`}</p>
         </div>`;
-      form.reset();
+      window.scrollTo(0, 0);
+      document.getElementById("confirm-heading")?.focus();
+      const copyBtn = document.getElementById("copy-token");
+      if (copyBtn) {
+        copyBtn.onclick = async () => {
+          try {
+            await navigator.clipboard.writeText(token);
+            copyBtn.textContent = "Copied";
+          } catch {
+            copyBtn.textContent = "Select and copy";
+          }
+        };
+      }
     } catch (err) {
       status.innerHTML = errorBox(err);
-    } finally {
       btn.disabled = false;
     }
   };
@@ -348,6 +419,7 @@ async function viewTrack(route) {
       body = `
         <div class="card"><div class="card-body">
           <span class="badge ${escapeHtml(data.status)}">${escapeHtml(data.status)}</span>
+          ${statusStepper(data.status)}
           <h3>${escapeHtml(data.packageName)}</h3>
           <p>${escapeHtml(data.eventCategory)} · ${php(data.basePrice)}</p>
           <p><strong>${escapeHtml(data.customerName)}</strong></p>
@@ -491,8 +563,8 @@ async function viewRegister() {
       <p class="muted">Choose a username so you can sign in with that name or your email.</p>
       <form class="form" id="register-form">
         <label>Full name<input name="fullName" required minlength="2" autocomplete="name" placeholder="Maria Santos" /></label>
-        <label>Username<input name="username" required minlength="3" maxlength="32" autocomplete="username" placeholder="maria.santos" pattern="[A-Za-z][A-Za-z0-9._]{2,31}" /></label>
-        <label>Mobile number<input name="contactNumber" required pattern="^(09|\\+639)\\d{9}$" placeholder="09171234567" /></label>
+        <label>Username<input name="username" required minlength="3" maxlength="32" autocomplete="username" placeholder="maria.santos" /><small class="field-help">3 to 32 characters. Start with a letter; letters, numbers, dots and underscores only.</small></label>
+        <label>Mobile number<input name="contactNumber" required inputmode="tel" placeholder="09171234567" /><small class="field-help">11 digits starting with 09, or +639. Spaces and dashes are removed for you.</small></label>
         <label>Email<input name="email" type="email" required autocomplete="email" placeholder="you@email.com" /></label>
         ${passwordField("required minlength=\"8\" autocomplete=\"new-password\"")}
         <div id="register-status"></div>
@@ -511,7 +583,7 @@ function bindRegister() {
   form.onsubmit = async (e) => {
     e.preventDefault();
     const fd = new FormData(form);
-    const phone = String(fd.get("contactNumber") || "").trim();
+    const phone = normalizePhone(fd.get("contactNumber"));
     if (!PHONE_RE.test(phone)) {
       status.innerHTML = errorBox(new Error("Use a Philippine mobile number such as 09171234567 or +639171234567."));
       return;
@@ -541,17 +613,17 @@ async function viewForgot() {
     <div class="login-wrap">
       <div class="kicker">Account recovery</div>
       <h2>Reset password</h2>
-      <p class="muted">We’ll email an OTP to the Gmail on the account. Enter that code with a new password.</p>
+      <p class="muted">Step 1: enter your username and the email on the account, then send a code. Step 2: enter the 6-digit code with a new password.</p>
       <form class="form" id="reset-form">
         <label>Username<input name="username" required minlength="3" maxlength="32" autocomplete="username" /></label>
-        <label>Gmail<input name="email" type="email" required autocomplete="email" /></label>
-        <label>Gmail verification code
+        <label>Email<input name="email" type="email" required autocomplete="email" /></label>
+        <button class="btn btn-ghost" type="button" id="send-reset-otp">Email me a code</button>
+        <label>Verification code
           <input class="otp-input" name="otp" inputmode="numeric" maxlength="6" pattern="\\d{6}" autocomplete="one-time-code" placeholder="000000" />
         </label>
         ${passwordField("required minlength=\"8\" autocomplete=\"new-password\"", "New password")}
         <div id="reset-status"></div>
         <div class="otp-actions">
-          <button class="btn btn-ghost" type="button" id="send-reset-otp">Email me a code</button>
           <button class="btn btn-primary" type="submit">Update password</button>
         </div>
       </form>
@@ -575,7 +647,7 @@ function bindReset() {
         username: assertUsername(String(fd.get("username")).trim()),
         email: assertEmail(String(fd.get("email")).trim()),
       });
-      status.innerHTML = `<div class="success">${escapeHtml(res.message || "Code sent. Check your Gmail.")}</div>`;
+      status.innerHTML = `<div class="success">${escapeHtml(res.message || "Code sent. Check your email.")}</div>`;
     } catch (err) {
       status.innerHTML = errorBox(err);
     } finally {
@@ -623,7 +695,8 @@ async function viewAccount() {
       (b) => `
       <article class="card"><div class="card-body">
         <span class="badge ${escapeHtml(b.status)}">${escapeHtml(b.status)}</span>
-        <h3>${escapeHtml(b.package?.packageName || "Booking")}</h3>
+        <h3>#${escapeHtml(b.bookingId)} · ${escapeHtml(b.packageName || b.package?.packageName || "Reservation")}</h3>
+        <p class="muted">${escapeHtml(b.eventCategory || "")}${b.basePrice != null ? " · " + php(b.basePrice) : ""}</p>
         <p>${formatDate(b.eventDate)} · ${b.guestCount} guests</p>
         <p>${escapeHtml(b.venueLocation)}</p>
         <p class="muted">Token: ${escapeHtml(b.trackingToken)}</p>
@@ -1203,7 +1276,14 @@ async function render() {
     }
     app.innerHTML = `<section class="section">${errorBox(err)}</section>`;
   }
-  document.title = "Casa de Stella Catering";
+  const heading = app.querySelector("h1, h2");
+  const label = heading ? heading.textContent.trim() : "";
+  document.title = label ? `${label} · Casa de Stella Catering` : "Casa de Stella Catering";
+  if (heading && document.activeElement === document.body && route.parts.length) {
+    heading.setAttribute("tabindex", "-1");
+    heading.focus({ preventScroll: true });
+  }
+  document.body.classList.remove("nav-open");
 }
 
 window.addEventListener("hashchange", render);

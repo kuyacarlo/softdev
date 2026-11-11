@@ -759,3 +759,209 @@ input[readonly] {
     padding-right: 1.1rem;
   }
 }
+
+/* ---- Phase 3 UX refinements ---- */
+
+/* B-08: lining, tabular figures so 1/0 do not read as I/o */
+body,
+h1,
+h2,
+h3,
+.display,
+.db-stats strong {
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* 2.5 touch targets: every link-style control is at least 44 px tall */
+.nav a,
+.nav .btn,
+.chip,
+.auth-switch a,
+.section-head a,
+.staff-link,
+.password-toggle,
+td a {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav a:not(.btn) {
+  padding-inline: 0.5rem;
+}
+
+.auth-switch a,
+.section-head a,
+.staff-link {
+  padding-inline: 0.75rem;
+}
+
+.field-help {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+
+/* B-02: booking summary */
+.booking-summary {
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 1.1rem 1.3rem;
+}
+
+.booking-summary h3 {
+  margin: 0 0 0.6rem;
+}
+
+.booking-summary dl {
+  margin: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.booking-summary dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.booking-summary dt {
+  color: var(--ink-soft);
+}
+
+.booking-summary dd {
+  margin: 0;
+  text-align: right;
+}
+
+.booking-summary .summary-total {
+  border-top: 1px solid var(--line);
+  padding-top: 0.45rem;
+  font-weight: 600;
+}
+
+.booking-summary .summary-total dd {
+  color: var(--emerald);
+}
+
+/* B-04: confirmation view */
+.confirm-panel p {
+  margin: 0.4rem 0;
+}
+
+.token-row {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+/* B-10: status stepper */
+.status-steps {
+  list-style: none;
+  display: flex;
+  gap: 0.4rem;
+  padding: 0;
+  margin: 0.8rem 0 0.3rem;
+  flex-wrap: wrap;
+}
+
+.status-steps li {
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+
+.status-steps li.done {
+  background: rgba(31, 74, 56, 0.1);
+  color: var(--emerald);
+  border-color: rgba(31, 74, 56, 0.3);
+}
+
+.status-steps li.current {
+  font-weight: 600;
+}
+
+.status-steps li.end {
+  border-color: var(--blush);
+  color: var(--blush);
+}
+
+.status-help {
+  color: var(--ink-soft);
+  margin: 0 0 0.8rem;
+}
+
+/* B-07: compact mobile header with a menu button */
+.nav-toggle {
+  display: none;
+}
+
+@media (max-width: 860px) {
+  .brand small {
+    display: none;
+  }
+
+  .site-header {
+    flex-wrap: wrap;
+  }
+
+  .nav-toggle {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0 1rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--white);
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .nav {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.2rem;
+    padding-top: 0.5rem;
+  }
+
+  body.nav-open .nav {
+    display: flex;
+  }
+
+  .nav a,
+  .nav .btn {
+    justify-content: flex-start;
+  }
+}
+
+.brand {
+  min-height: 44px;
+  justify-content: center;
+}
+
+/* headings receive focus on route change for screen readers; no visible ring needed */
+h1[tabindex="-1"]:focus,
+h2[tabindex="-1"]:focus {
+  outline: none;
+}
+
+/* keep inputs their natural height when a neighbour has helper text */
+.form.two {
+  align-items: start;
+}
