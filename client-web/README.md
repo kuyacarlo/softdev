@@ -9,3 +9,10 @@ the deployment so the repository matches what is running. Later commits apply th
 Phase 3 UX refinements (B-01 to B-11, except B-06).
 
 Deploy: upload this folder as the Pages project's static assets (no build step).
+
+## Preview without Cloudflare access
+
+`node preview-server.js` serves this folder on port 8787 and forwards `/api/*` to the live
+Worker at stella-catering-82j.pages.dev, so the refined frontend runs same-origin against the
+real API and data. Open it by the machine's hostname or IP, not `localhost` or `127.0.0.1`
+(`js/api.js` sends API calls to a local XAMPP path for those two hostnames).
